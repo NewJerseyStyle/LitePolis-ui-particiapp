@@ -18,6 +18,9 @@ STATIC_DIR = Path(__file__).parent / "static"
 
 # Create router
 router = APIRouter(tags=["ParticiApp UI"])
+prefix = __name__.split('.')[-2]
+prefix = '_'.join(prefix.split('_')[2:])
+dependencies = []
 
 
 def get_static_file_path(filename: str) -> Path:

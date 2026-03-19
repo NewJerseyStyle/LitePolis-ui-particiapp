@@ -21,13 +21,23 @@ litepolis-cli deploy sync-deps
 
 ## Configuration
 
-Configuration is handled via environment variables or the LitePolis config system. The module uses these defaults:
+This module exports default configuration that will be used automatically. To customize, create a config file:
 
-```yaml
-# LitePolis config (handled automatically)
-litepolis_ui_particiapp:
-  base_url: "/particiapp"
-  api_base_url: "/api"
+```bash
+litepolis-cli deploy init-config
+```
+
+Then edit `~/.litepolis/litepolis.config` to add:
+
+```ini
+[litepolis_ui_particiapp]
+base_url = /particiapp
+api_base_url = /api
+```
+
+Or set environment variables:
+```bash
+export LITEPOLIS_UI_PARTICIAPP_BASE_URL=/particiapp
 ```
 
 ## Quick Start
@@ -97,7 +107,7 @@ LitePolis-ui-particiapp/
 ├── pyproject.toml
 ├── README.md
 ├── litepolis_ui_particiapp/
-│   ├── __init__.py          # Exports: router, DEFAULT_CONFIG
+│   ├── __init__.py          # Exports: router, DEFAULT_CONFIG, prefix, dependencies
 │   ├── core.py              # FastAPI router
 │   └── static/              # ParticiApp frontend
 │       ├── index.html

@@ -1,0 +1,41 @@
+[build-system]
+requires = [
+    "setuptools>=61.2",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "litepolis-ui-template"
+version = "0.0.1"
+authors = [
+    { name = "Your name" },
+]
+description = "The user interface template module for LitePolis"
+dependencies = [
+    "fastapi",
+    "litepolis",
+]
+
+[project.license]
+text = "file: LICENSE"
+
+[project.readme]
+file = "README.md"
+content-type = "text/markdown"
+
+[project.urls]
+Homepage = "https://github.com/change-to-your-repo"
+
+[tool.setuptools]
+include-package-data = false
+
+[tool.setuptools.packages.find]
+exclude = [
+    "tests",
+]
+namespaces = false
+
+[tool.setuptools.package-data]
+static = [
+    "litepolis_ui_template/static/*.html",
+]

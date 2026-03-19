@@ -15,6 +15,9 @@ ParticiApp provides a simpler alternative to the Polis participation frontend:
 ## Installation
 
 ```bash
+litepolis-cli deploy add-deps litepolis-database-default
+litepolis-cli deploy add-deps litepolis-database-particiapi
+litepolis-cli deploy add-deps litepolis-router-particiapi
 litepolis-cli deploy add-deps litepolis-ui-particiapp
 litepolis-cli deploy sync-deps
 ```

@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unknown Conversation</title>
+<link rel="icon" href="images/favicon.png">
+<link rel="stylesheet" href="style/conversation.css">
+<link rel="stylesheet" href="style/branding.css">
+<link rel="modulepreload" href="scripts/marked.esm.js">
+<link rel="modulepreload" href="scripts/particiapi-client.js">
+<link rel="modulepreload" href="scripts/conversation.js">
+<script>
+const ua = navigator.userAgent;
+if (ua.includes("AppleWebKit/") && !ua.includes("Chrome/")) {
+    document.documentElement.classList.add("safari");
+} else if (ua.includes("Gecko/")) {
+    const geckoVersion = parseInt(/\brv:(?<version>\d+)/.exec(ua)?.groups.version, 10);
+    if (geckoVersion < 121) {
+        document.documentElement.classList.add("unsupported-browser");
+    }
+}
+</script>
+<script type="module">
+import * as particiapi from "./scripts/particiapi-client.js";
+import * as conversation from "./scripts/conversation.js";
+
+if (document.documentElement.classList.contains("unsupported-browser")) {
+    conversation.showErrorModal("Your browser version is not supported.",
+        "Please use a different browser or update your current browser");
+    throw new Error("Unsupported browser version");
+}
+
+const urlParams = new URLSearchParams(window.location.search);
+const baseURL = urlParams.get("base_url");
+const conversationID = urlParams.get("conversation_id");
+if (baseURL && conversationID) {
+    const baseElement = document.querySelector("#conversation");
+    const ca = new conversation.ConversationApp(baseElement, baseURL, conversationID);
+    ca.init().catch(error => {
+        if (error instanceof particiapi.ParticiapiError) {
+            console.log(error);
+            conversation.showErrorModal("Failed to load the requested conversation.", error)
+        }
+        throw error;
+    });
+} else {
+    conversation.showErrorModal("Failed to load the requested conversation.", "Invalid URL");
+}
+
+for (let dialogOpener of document.querySelectorAll("[data-dialog-id]")) {
+    const targetDialog = document.querySelector(`dialog#${dialogOpener.dataset.dialogId}`);
+    dialogOpener.addEventListener("click", ev => targetDialog.showModal());
+    targetDialog.querySelector(".dialog-close").addEventListener("click", ev => targetDialog.close());
+}
+
+document.querySelector("[data-dialog-id='privacy-dialog']").addEventListener("click", ev => {
+    const privacyDialog = document.querySelector(`dialog#${ev.target.dataset.dialogId}`);
+    if (!("href" in privacyDialog.dataset)) {
+        return;
+    }
+
+    fetch(privacyDialog.dataset.href).then(response => {
+        if (!response.ok) {
+            throw new Error(`unexpected response fetching ${response.url}: ${response.status} ${response.statusText}`);
+        }
+        return response.text();
+    }).then(text => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(text, "text/html");
+        const content = doc.querySelector(".content");
+        const dialogContent = privacyDialog.querySelector(".dialog-content");
+        for (let node of content.childNodes) {
+            if (node.nodeName !== "H1") {
+                dialogContent.appendChild(document.importNode(node, true));
+            }
+        }
+
+        delete privacyDialog.dataset.href
+    })
+});
+</script>
+</head>
+<body>
+<header class="example-header">
+<img src="/images/logo.svg" alt="Example Logo" class="header-logo">
+<nav>
+<ul>
+<li><button id="help" class="nav-button" title="Help" data-dialog-id="help-dialog">Help</button></li>
+<li><button id="privacy" class="nav-button" title="Privacy policy" data-dialog-id="privacy-dialog">Privacy policy</button></li>
+</ul>
+</nav>
+</header>
+<main id="conversation" class="conversation">
+<div id="intro" class="intro">
+<h1 id="topic" class="topic">Unknown Conversation</h1>
+<p id="description" class="description"></p>
+</div>
+<div id="participation" class="participation overlay-container">
+<div id="participation-layer">
+<template id="error-message-template">
+<details>
+<summary data-id="error-message-text"></summary>
+<p data-id="error-details-text"></p>
+</details>
+</template>
+<div id="error-message" class="error-message"></div>
+<template id="statement-voting-template">
+<h2 class="voting-heading">Statement</h2>
+<blockquote data-id="voting-statement" class="voting-statement"></blockquote>
+<form action="#" data-id="voting-form">
+<input type="hidden" name="statement-id" value="">
+<fieldset data-id="voting-buttons" class="voting-buttons" disabled>
+<button type="submit" title="Agree" name="vote" value="-1" class="voting-button vote-agree">Agree</button>
+<button type="submit" title="Neutral" name="vote" value="0" class="voting-button vote-neutral">Neutral</button>
+<button type="submit" title="Disagree" name="vote" value="1" class="voting-button vote-disagree">Disagree</button>
+</fieldset>
+</form>
+</template>
+<template id="meta-voting-template">
+<h2 class="voting-heading">Metadata</h2>
+<blockquote data-id="voting-statement" class="voting-statement"></blockquote>
+<form action="#" data-id="voting-form">
+<input type="hidden" name="statement-id" value="">
+<fieldset data-id="voting-buttons" class="voting-buttons" disabled>
+<button type="submit" title="Yes" name="vote" value="-1" class="voting-button vote-yes">Yes</button>
+<button type="submit" title="No" name="vote" value="1" class="voting-button vote-no">No</button>
+<button type="submit" title="No answer" name="vote" value="0" class="voting-button vote-skip">No answer</button>
+</fieldset>
+</form>
+</template>
+<div class="overlay-container">
+<div id="voting"></div>
+<div id="no-statements-overlay" class="no-statements-message">
+<p>There are no more statements left to vote on. You can wait until others add new statements to vote on or subscribe below so that you will be notified as soon as new statements are submitted.</p>
+</div>
+</div>
+<hr>
+<p class="statement-instructions">You can add your own statements to the conversation. Please check the rules before doing so. Once you have submitted a statement it cannot be changed.</p>
+<form action="" id="statement-form" class="statement-form">
+<div id="statement-message" hidden>Your statement has been submitted</div>
+<fieldset id="statement-widgets" disabled>
+<img src="images/avatar.svg" width="48" height="48" alt="user avatar" id="user-avatar" class="user-avatar">
+<textarea id="statement-text" name="statement-text" required="" placeholder="Your own statement" rows="4" cols="40" maxlength="140" class="statement-text"></textarea>
+<output for="statement-text" id="statement-glyph-count" class="statement-glyph-count"></output>
+<button type="submit" id="statement-submit" class="submit-button">Submit</button>
+</fieldset>
+</form>
+<label class="notifications-subscription"><input type="checkbox" name="notifications" id="notifications" disabled>Enable email notifications for this conversation</label>
+</div>
+<div id="login-overlay" class="login-overlay overlay-visible">
+<h2 class="voting-heading">Statement</h2>
+<blockquote id="seed-statement" class="voting-statement"></blockquote>
+<div class="login-message">
+<p>You need to log in in order to participate in the discussion.</p>
+<button id="login" class="login-button" type="button">Login</button>
+</div>
+</div>
+<div id="inactive-overlay">
+<p>This conversation is closed.</p>
+</div>
+</div>
+<div id="results" class="tabs results">
+<template id="result-item-agree-template">
+<li class="result-item result-item-agree">
+<blockquote class="result-statement"></blockquote>
+<label class="result-bar-label"><meter min="0" max="100" class="result-bar" title="Percent"></meter><span class="result-value-percent"></span> of voters agree</label>
+</li>
+</template>
+<template id="result-item-disagree-template">
+<li class="result-item result-item-disagree">
+<blockquote class="result-statement"></blockquote>
+<label class="result-bar-label"><meter min="0" max="100" class="result-bar" title="Percent"></meter><span class="result-value-percent"></span> of voters disagree</label>
+</li>
+</template>
+<div class="tablist"><button class="tab tab-active" id="tab-majority" name="tab" value="tabpanel-majority" title="Majority">Majority</button><button class="tab" name="tab" value="tabpanel-a" title="Group A" hidden>A</button><button class="tab" name="tab" value="tabpanel-b" title="Group B" hidden>B</button><button class="tab" name="tab" value="tabpanel-c" title="Group C" hidden>C</button><button class="tab" name="tab" value="tabpanel-d" title="Group D" hidden>D</button><button class="tab" name="tab" value="tabpanel-e" title="Group E" hidden>E</button></div>
+<div class="tabpanel tabpanel-active" id="tabpanel-majority">
+<p class="results-empty">The results are not yet available.</p>
+<ol class="results-list"></ol>
+</div>
+<div class="tabpanel" id="tabpanel-a" hidden>
+<p class="results-empty">The group results are not yet available.</p>
+<ol class="results-list"></ol>
+</div>
+<div class="tabpanel" id="tabpanel-b" hidden>
+<p class="results-empty">The group results are not yet available.</p>
+<ol class="results-list"></ol>
+</div>
+<div class="tabpanel" id="tabpanel-c" hidden>
+<p class="results-empty">The group results are not yet available.</p>
+<ol class="results-list"></ol>
+</div>
+<div class="tabpanel" id="tabpanel-d" hidden>
+<p class="results-empty">The group results are not yet available.</p>
+<ol class="results-list"></ol>
+</div>
+<div class="tabpanel" id="tabpanel-e" hidden>
+<p class="results-empty">The group results are not yet available.</p>
+<ol class="results-list"></ol>
+</div>
+</div>
+</main>
+<dialog id="error-dialog">
+<article>
+<header>
+<h1>Error</h1>
+</header>
+<div class="dialog-content">
+<div class="error-message">
+<details>
+<summary id="error-dialog-message"></summary>
+<p id="error-dialog-details"></p>
+</details>
+</div>
+</div>
+</article>
+</dialog>
+<dialog id="help-dialog">
+<article>
+<header>
+<h1>Instructions</h1>
+<button id="help-close" class="dialog-close"></button>
+</header>
+<div class="dialog-content">
+<h2>Voting on statements</h2>
+<p>You can vote by clicking one of the "Agree," "Neutral" or "Disagree" buttons. After submitting your vote, you will be presented with the next statement. The order of the statements varies and is therefore not the same for every participant. You do not have to answer every statement, your opinion counts even if you only answer a few of them. You can also come back later and continue where you left off.</p>
+<h2>How have other participants voted?</h2>
+<p>On the right<a href="#help-note-1"><sup>*</sup></a> you can see the current ranking of all statements (including your own votes). The top statements on which the majority of all participants or respectively the majority of members of each group agree or disagree on are shown in the form of bar charts. These results are updated regularly and thus subject to change as other participants vote.</p>
+<h2>Adding you own statement</h2>
+<p>Is your opinion or view not represented by the exisitng statements? If so, add your own statements to the discussion. Other participants can then vote on your the statements. Type a statement of up to 140 characters in the text field below the voting buttons. Make sure the statement can be answered with "Agree," "Neutral," or "Disagree." The statement should fit the topic and contribute to the discussion. An administrator may remove the statement if it does not comply with the site-specific rules.</p>
+<p>If you have any questions, please contact the site administrator.</p>
+</div>
+<footer>
+<ul class="notes">
+<li id="help-note-1"><sup>*</sup> If you participate using a device with a small screen, you will see the results not on the right side but below the voting section.</li>
+</ul>
+</footer>
+</article>
+</dialog>
+<dialog id="privacy-dialog" data-href="./privacy.html">
+<article>
+<header>
+<h1>Privacy Policy</h1>
+<button id="privacy-close" class="dialog-close"></button>
+</header>
+<div class="dialog-content">
+</article>
+</dialog>
+</body>
+</html>

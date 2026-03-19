@@ -1,0 +1,131 @@
+@font-face {
+  font-family: 'Noto Sans';
+  font-style: italic;
+  font-weight: 300;
+  font-stretch: normal;
+  font-display: swap;
+  src: url('../fonts/noto-sans/static/NotoSans-LightItalic.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Noto Sans';
+  font-style: normal;
+  font-weight: 300;
+  font-stretch: normal;
+  font-display: swap;
+  src: url('../fonts/noto-sans/static/NotoSans-Light.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Noto Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: normal;
+  font-display: swap;
+  src: url('../fonts/noto-sans/static/NotoSans-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Noto Sans';
+  font-style: italic;
+  font-weight: 500;
+  font-stretch: normal;
+  font-display: swap;
+  src: url('../fonts/noto-sans/static/NotoSans-MediumItalic.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Noto Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-stretch: normal;
+  font-display: swap;
+  src: url('../fonts/noto-sans/static/NotoSans-Medium.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Noto Sans';
+  font-style: italic;
+  font-weight: 600;
+  font-stretch: normal;
+  font-display: swap;
+  src: url('../fonts/noto-sans/static/NotoSans-SemiBoldItalic.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Noto Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: normal;
+  font-display: swap;
+  src: url('../fonts/noto-sans/static/NotoSans-SemiBold.ttf') format('truetype');
+}
+
+html {
+  font-size: 62.5%;
+  box-sizing: border-box;
+}
+
+body {
+  font: 300 1.5rem/2.4rem "Noto Sans";
+  padding: 24px;
+  margin: 0;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+:any-link,
+:any-link:hover,
+:any-link:active {
+  color: #436f8b;
+  background-color: transparent;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+h1,
+h2,
+p,
+li {
+  hyphens: auto;
+}
+
+h1 {
+  font: 600 2.4rem/3.0rem var(--conversation-font-family);
+  margin-block: 16px 8px;
+}
+
+h2 {
+  font: 600 1.9rem/2.4rem var(--conversation-font-family);
+  margin-block: 16px 8px;
+}
+
+h1 + p,
+h2 + p {
+  margin-block-start: 8px;
+}
+
+p,
+ul {
+  margin-block: 8px;
+}
+
+dt {
+  font-weight: 600;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  margin-inline: auto;
+  max-width: 1140px;
+}
+
+.content {
+  max-width: 80ch;
+  padding: 24px;
+}

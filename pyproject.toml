@@ -1,41 +1,35 @@
 [build-system]
-requires = [
-    "setuptools>=61.2",
-]
+requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "litepolis-ui-template"
-version = "0.0.1"
-authors = [
-    { name = "Your name" },
-]
-description = "The user interface template module for LitePolis"
+name = "litepolis-ui-particiapp"
+version = "0.1.0"
+description = "ParticiApp frontend UI module for LitePolis"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
 dependencies = [
-    "fastapi",
-    "litepolis",
+    "fastapi>=0.100.0",
 ]
-
-[project.license]
-text = "file: LICENSE"
-
-[project.readme]
-file = "README.md"
-content-type = "text/markdown"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
 
 [project.urls]
-Homepage = "https://github.com/change-to-your-repo"
-
-[tool.setuptools]
-include-package-data = false
+Homepage = "https://github.com/NewJerseyStyle/LitePolis-ui-particiapp"
 
 [tool.setuptools.packages.find]
-exclude = [
-    "tests",
-]
-namespaces = false
+where = ["."]
+include = ["litepolis_ui_particiapp*"]
 
-[tool.setuptools.package-data]
-static = [
-    "litepolis_ui_template/static/*.html",
-]
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_functions = "test_*"

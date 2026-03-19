@@ -1,0 +1,104 @@
+:root {
+  --conversation-font-family: "Noto Sans";
+  --conversation-text-font: 300 1.5rem/2.4rem var(--conversation-font-family);
+  --conversation-h1-font: 600 2.4rem/3.0rem var(--conversation-font-family);
+  --conversation-h2-font: 600 1.9rem/2.4rem var(--conversation-font-family);
+  --conversation-button-font: 600 1.5rem var(--conversation-font-family);
+  --conversation-description-font: 300 1.8rem/2.6rem var(--conversation-font-family);
+  --conversation-statement-heading-font: 600 1.5rem/2.4rem var(--conversation-font-family);
+  --conversation-statement-font: 600 2.0rem/3.0rem var(--conversation-font-family);
+  --conversation-small-font: 300 1.3rem var(--conversation-font-family);
+  --conversation-color-neutral-0: #333;
+  --conversation-color-neutral-1: #fff;
+  --conversation-color-neutral-2: #eee;
+  --conversation-color-neutral-3: #ccc;
+  --conversation-color-neutral-4: #888;
+  --conversation-text-color: #000;
+  --conversation-button-color: #000;
+  --conversation-link-color: #436f8b;
+  --conversation-login-overlay-color: var(--conversation-text-color);
+  --conversation-login-overlay-background-color: var(--conversation-color-neutral-1);
+  --conversation-button-background-color: var(--conversation-color-neutral-1);
+  --conversation-button-hover-color: var(--conversation-color-neutral-1);
+  --conversation-button-hover-background-color: var(--conversation-color-neutral-0);
+  --conversation-button-box-shadow: #ddd 0 2px;
+  --conversation-login-button-color: var(--conversation-color-neutral-1);
+  --conversation-login-button-background-color: #000;
+  --conversation-border-color: var(--conversation-color-neutral-3);
+  --conversation-error-color: #6c0000;
+  --conversation-error-background-color: #f6d0d0;
+  --conversation-textarea-background-color: var(--conversation-color-neutral-1);
+  --conversation-button-border-radius: 4px;
+  --conversation-border-radius: 8px;
+  --conversation-color-agree: #4f439d;
+  --conversation-color-disagree: #ce4242;
+  --conversation-spacing-1: 8px;
+  --conversation-spacing-2: 12px;
+  --conversation-spacing-3: 16px;
+  --conversation-spacing-4: 24px;
+  --conversation-spacing-5: 32px;
+  --conversation-spacing-6: 48px;
+  --conversation-spacing-7: 64px;
+  --conversation-spacing-8: 128px;
+  --conversation-row-gap: 32px;
+  --conversation-column-gap: 40px;
+  --conversation-max-width: 1140px;
+  --conversation-box-shadow: 0 3px 20px rgba(0, 0, 0, .15);
+}
+
+.example-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--conversation-spacing-1) var(--conversation-spacing-4);
+  margin-inline: auto;
+  margin-block: 0 var(--conversation-spacing-4);
+  font: var(--conversation-text-font);
+}
+
+.example-header .header-logo {
+  display: block;
+  width: 250px;
+}
+
+.example-header :any-link {
+  text-decoration: none;
+  color: var(--conversation-link-color);
+}
+
+.example-header nav ul {
+  display: flex;
+  flex-direction: row;
+  gap: var(--conversation-spacing-1);
+  list-style: none;
+  margin-block: 0;
+  padding-inline: 0;
+}
+
+.example-header nav li:nth-of-type(n+2)::before {
+  content: '';
+  border-left: 2px solid #ddd;
+  margin-right: var(--conversation-spacing-1);
+}
+
+.example-header .nav-button {
+  font: inherit;
+  color: var(--conversation-link-color);
+  background-color: transparent;
+  text-decoration: none;
+  cursor: pointer;
+  padding: inherit;
+}
+
+@media only screen and (width >= 576px) {
+  .example-header {
+    flex-direction: row;
+  }
+}
+
+@media only screen and (width >= 992px) {
+  .example-header {
+    padding-inline: var(--conversation-spacing-4);
+    max-width: var(--conversation-max-width);
+  }
+}

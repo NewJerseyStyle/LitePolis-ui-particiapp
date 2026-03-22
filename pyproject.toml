@@ -29,6 +29,9 @@ Homepage = "https://github.com/NewJerseyStyle/LitePolis-ui-particiapp"
 where = ["."]
 include = ["litepolis_ui_particiapp*"]
 
+[tool.setuptools.package-data]
+"litepolis_ui_particiapp" = ["static/**/*"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = "test_*.py"

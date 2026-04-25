@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Dict, Any
 
 from fastapi import APIRouter, Request
+from fastapi import HTTPException
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -30,15 +31,18 @@ def get_static_file_path(filename: str) -> Path:
 
 # Mount static asset directories if they exist
 if STATIC_DIR.exists():
-    # Mount subdirectories (scripts, images, style, fonts)
-    for subdir in ["scripts", "images", "style", "fonts"]:
-        subdir_path = STATIC_DIR / subdir
-        if subdir_path.exists():
-            router.mount(
-                f"/{subdir}",
-                StaticFiles(directory=str(subdir_path)),
-                name=f"particiapp-{subdir}",
-            )
+    _ALLOWED_SUBDIRS = {"scripts", "images", "style", "fonts"}
+
+    @router.get("/{subdir}/{path:path}", include_in_schema=False)
+    async def _serve_asset(subdir: str, path: str):
+        if subdir not in _ALLOWED_SUBDIRS:
+            raise HTTPException(404)
+        target = (STATIC_DIR / subdir / path).resolve()
+        if not str(target).startswith(str(STATIC_DIR.resolve())):
+            raise HTTPException(404)  # path-traversal guard
+        if not target.is_file():
+            raise HTTPException(404)
+        return FileResponse(target)
 
 
 @router.get("/", response_class=HTMLResponse)

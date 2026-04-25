@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "litepolis-ui-particiapp"
-version = "0.1.0"
+version = "0.1.1"
 description = "ParticiApp frontend UI module for LitePolis"
 readme = "README.md"
 license = {text = "MIT"}
